@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   accessToken: null,
   userData: {},
+  students: [],
 };
 
 const appSlice = createSlice({
@@ -15,6 +16,9 @@ const appSlice = createSlice({
     saveUserData(state, action) {
       state.userData = action.payload;
     },
+    saveStudentList(state, action) {
+      state.students = action.payload;
+    },
     resetUserData(state) {
       state.accessToken = null;
       state.userData = null;
@@ -22,5 +26,6 @@ const appSlice = createSlice({
   },
 });
 
-export const { setAccessToken, saveUserData, resetUserData } = appSlice.actions;
+export const { setAccessToken, saveUserData, saveStudentList, resetUserData } =
+  appSlice.actions;
 export default appSlice.reducer;

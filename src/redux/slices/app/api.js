@@ -13,8 +13,17 @@ export const appApi = baseApiSlice.injectEndpoints({
           url: "/user",
         }),
       }),
+      getStudentList: builder.query({
+        query: () => ({
+          url: "/users?role=student",
+        }),
+      }),
     };
   },
 });
 
-export const { useGetActiveCentresQuery, useGetUserDataQuery } = appApi;
+export const {
+  useGetActiveCentresQuery,
+  useGetUserDataQuery,
+  useGetStudentListQuery,
+} = appApi;

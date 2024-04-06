@@ -8,6 +8,10 @@ export const makeSelectAccessToken = () =>
 export const makeSelectUserData = () =>
   createSelector(selectApp, (appState) => appState.userData);
 
+  export const makeSelectStudentList = () =>
+  createSelector(selectApp, (appState) => appState.students);
+
+
 export const makeSelectUserName = () =>
   createSelector(selectApp, (appState) => appState.userData?.fullName);
 
