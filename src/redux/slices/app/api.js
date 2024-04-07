@@ -18,6 +18,13 @@ export const appApi = baseApiSlice.injectEndpoints({
           url: "/users?role=student",
         }),
       }),
+      approveStudent: builder.mutation({
+        query: ({ id, body }) => ({
+          url: `/user/${id}/approve`,
+          method: "POST",
+          body: body,
+        }),
+      }),
     };
   },
 });
@@ -26,4 +33,5 @@ export const {
   useGetActiveCentresQuery,
   useGetUserDataQuery,
   useGetStudentListQuery,
+  useApproveStudentMutation,
 } = appApi;

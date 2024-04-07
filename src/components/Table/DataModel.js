@@ -6,24 +6,76 @@ import {
   ModalContent,
   ModalCloseButton,
   ModalBody,
-  Flex,
   FormControl,
   FormLabel,
-  Heading,
   Input,
+  Button,
+  Heading,
+  HStack,
   Stack,
+  Flex,
   Grid,
 } from "@chakra-ui/react";
+import CustomToast from "../Notification";
+import { useApproveStudentMutation } from "../../redux/slices/app/api";
 
 const DataModal = ({ isOpen, onClose, rowData }) => {
-  const [profileData, setProfileData] = useState({});
-  const [editable] = useState(false);
+  const [temporaryData, setTemporaryData] = useState({});
+  const [isEditing, setIsEditing] = useState(false);
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
 
   useEffect(() => {
     if (rowData) {
-      setProfileData(rowData);
+      setTemporaryData(rowData);
     }
   }, [rowData]);
+
+  useEffect(() => {
+    console.log(temporaryData);
+  }, [temporaryData]);
+
+  const [approveStudent, { isLoading }] = useApproveStudentMutation();
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setTemporaryData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
+
+  const handleSaveClick = () => {
+    setIsEditing(false);
+  };
+
+  const handleApprove = async () => {
+    try {
+      const payload = {};
+
+      for (const key in temporaryData) {
+        if (temporaryData[key] !== rowData[key]) {
+          payload[key] = temporaryData[key];
+        }
+      }
+
+      const response = await approveStudent({
+        id: rowData.id,
+        body: payload,
+      });
+      console.log(response); // Log the response from the server
+      setShowSuccessToast(true); // Show success toast on successful approval
+    } catch (error) {
+      console.error("Error approving student:", error);
+    }
+  };
+
+  const handleReject = () => {
+    console.log("reject");
+  };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl">
@@ -39,56 +91,55 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
               <FormControl>
                 <FormLabel>Full Name</FormLabel>
                 <Input
-                  placeholder="fullName"
-                  _placeholder={{ color: "gray.500" }}
                   type="text"
-                  value={profileData?.fullName}
-                  isReadOnly={!editable}
+                  name="fullName"
+                  value={temporaryData.fullName || ""}
+                  onChange={handleInputChange}
+                  isReadOnly={!isEditing}
                 />
               </FormControl>
-
               <Grid templateColumns="repeat(2, 1fr)" gap={4} w="100%">
                 <FormControl>
                   <FormLabel>Race</FormLabel>
                   <Input
-                    placeholder="race"
-                    _placeholder={{ color: "gray.500" }}
                     type="text"
-                    value={profileData?.race}
-                    isReadOnly={!editable}
+                    name="race"
+                    value={temporaryData.race || ""}
+                    onChange={handleInputChange}
+                    isReadOnly={!isEditing}
                   />
                 </FormControl>
                 <FormControl>
                   <FormLabel>Nationality</FormLabel>
                   <Input
-                    placeholder="nationality"
-                    _placeholder={{ color: "gray.500" }}
                     type="text"
-                    value={profileData?.nationality}
-                    isReadOnly={!editable}
+                    name="nationality"
+                    value={temporaryData.nationality}
+                    onChange={handleInputChange}
+                    isReadOnly={!isEditing}
                   />
                 </FormControl>
               </Grid>
-              {profileData?.nationality === "malaysia" ? (
+              {temporaryData.nationality === "malaysia" ? (
                 <FormControl>
                   <FormLabel>My Kad / NRIC</FormLabel>
                   <Input
-                    placeholder="nric"
-                    _placeholder={{ color: "gray.500" }}
                     type="text"
-                    value={profileData?.nric}
-                    isReadOnly={!editable}
+                    name="nric"
+                    value={temporaryData.nric}
+                    onChange={handleInputChange}
+                    isReadOnly={!isEditing}
                   />
                 </FormControl>
               ) : (
                 <FormControl>
                   <FormLabel>Passport</FormLabel>
                   <Input
-                    placeholder="passport"
-                    _placeholder={{ color: "gray.500" }}
                     type="text"
-                    value={profileData?.passport}
-                    isReadOnly={!editable}
+                    name="passport"
+                    value={temporaryData.passport}
+                    onChange={handleInputChange}
+                    isReadOnly={!isEditing}
                   />
                 </FormControl>
               )}
@@ -96,21 +147,21 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                 <FormControl>
                   <FormLabel>Gender</FormLabel>
                   <Input
-                    placeholder="gender"
-                    _placeholder={{ color: "gray.500" }}
                     type="text"
-                    value={profileData?.gender}
-                    isReadOnly={!editable}
+                    name="gender"
+                    value={temporaryData.gender}
+                    onChange={handleInputChange}
+                    isReadOnly={!isEditing}
                   />
                 </FormControl>
                 <FormControl>
                   <FormLabel>Date of Birth</FormLabel>
                   <Input
-                    placeholder="dob"
-                    _placeholder={{ color: "gray.500" }}
                     type="text"
-                    value={profileData?.dob}
-                    isReadOnly={!editable}
+                    name="dob"
+                    value={temporaryData.dob}
+                    onChange={handleInputChange}
+                    isReadOnly={!isEditing}
                   />
                 </FormControl>
               </Grid>
@@ -118,44 +169,43 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
               <FormControl>
                 <FormLabel>School</FormLabel>
                 <Input
-                  placeholder="school"
-                  _placeholder={{ color: "gray.500" }}
                   type="text"
-                  value={profileData?.school}
-                  isReadOnly={!editable}
+                  name="school"
+                  value={temporaryData.school}
+                  onChange={handleInputChange}
+                  isReadOnly={!isEditing}
                 />
               </FormControl>
 
               <FormControl>
                 <FormLabel>MOE Email</FormLabel>
                 <Input
-                  placeholder="moe email"
-                  _placeholder={{ color: "gray.500" }}
                   type="text"
-                  value={profileData?.moeEmail || "-"}
-                  isReadOnly={!editable}
+                  name="moeEmail"
+                  value={temporaryData.moeEmail || "-"}
+                  onChange={handleInputChange}
+                  isReadOnly={!isEditing}
                 />
               </FormControl>
 
               <FormControl>
                 <FormLabel>Contact Number</FormLabel>
                 <Input
-                  placeholder="contact number"
-                  _placeholder={{ color: "gray.500" }}
                   type="text"
-                  value={profileData?.contact || "-"}
-                  isReadOnly={!editable}
+                  name="contact"
+                  value={temporaryData.contact || "-"}
+                  onChange={handleInputChange}
+                  isReadOnly={!isEditing}
                 />
               </FormControl>
 
               <FormControl>
                 <FormLabel>Centre</FormLabel>
                 <Input
-                  placeholder="centre"
-                  _placeholder={{ color: "gray.500" }}
                   type="text"
-                  value={profileData?.center || "-"}
-                  isReadOnly={!editable}
+                  name="center"
+                  value={temporaryData.center || "-"}
+                  isReadOnly={true}
                 />
               </FormControl>
               <Heading
@@ -168,43 +218,72 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
               <FormControl>
                 <FormLabel>Name</FormLabel>
                 <Input
-                  placeholder="parentName"
-                  _placeholder={{ color: "gray.500" }}
                   type="text"
-                  value={profileData?.parentName || "-"}
-                  isReadOnly={!editable}
+                  name="parentName"
+                  value={temporaryData.parentName || "-"}
+                  onChange={handleInputChange}
+                  isReadOnly={!isEditing}
                 />
               </FormControl>
               <FormControl>
                 <FormLabel>Relationship to student</FormLabel>
                 <Input
-                  placeholder="relationship"
-                  _placeholder={{ color: "gray.500" }}
                   type="text"
-                  value={profileData?.relationship || "-"}
-                  isReadOnly={!editable}
+                  name="relationship"
+                  value={temporaryData.relationship || "-"}
+                  onChange={handleInputChange}
+                  isReadOnly={!isEditing}
                 />
               </FormControl>
               <FormControl>
                 <FormLabel>Email</FormLabel>
                 <Input
-                  placeholder="parentEmail"
-                  _placeholder={{ color: "gray.500" }}
                   type="text"
-                  value={profileData?.parentEmail || "-"}
-                  isReadOnly={!editable}
+                  name="parentEmail"
+                  value={temporaryData.parentEmail || "-"}
+                  onChange={handleInputChange}
+                  isReadOnly={!isEditing}
                 />
               </FormControl>
               <FormControl>
                 <FormLabel>Contact Number</FormLabel>
                 <Input
-                  placeholder="parentContact"
-                  _placeholder={{ color: "gray.500" }}
                   type="text"
-                  value={profileData?.parentContact || "-"}
-                  isReadOnly={!editable}
+                  name="parentContact"
+                  value={temporaryData.parentContact || "-"}
+                  onChange={handleInputChange}
+                  isReadOnly={!isEditing}
                 />
               </FormControl>
+              <Flex>
+                <HStack spacing={4} w={"100%"}>
+                  {isEditing ? (
+                    <Button onClick={handleSaveClick}>Save</Button>
+                  ) : (
+                    <Button onClick={handleEditClick}>Edit</Button>
+                  )}
+                  {rowData?.status !== "approved" && (
+                    <>
+                      <Button
+                        colorScheme="green"
+                        isLoading={isLoading}
+                        onClick={handleApprove}
+                      >
+                        Approve
+                      </Button>
+                      <Button colorScheme="red" onClick={handleReject}>
+                        Reject
+                      </Button>
+                    </>
+                  )}
+                </HStack>
+              </Flex>
+              {showSuccessToast && (
+                <CustomToast
+                  message="Student data approved successfully!"
+                  onClose={() => setShowSuccessToast(false)}
+                />
+              )}
             </Stack>
           </Flex>
         </ModalBody>
@@ -217,7 +296,6 @@ DataModal.propTypes = {
   isOpen: PropTypes.any.isRequired,
   onClose: PropTypes.func.isRequired,
   rowData: PropTypes.object.isRequired,
-  onSubmit: PropTypes.func.isRequired,
 };
 
 export default DataModal;
