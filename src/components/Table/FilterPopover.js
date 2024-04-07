@@ -92,9 +92,9 @@ const FilterPopover = ({ columnFilters, setColumnFilters }) => {
 };
 
 StatusItem.propTypes = {
-  status: PropTypes.array.isRequired,
+  status: PropTypes.object.isRequired,
   setColumnFilters: PropTypes.func.isRequired,
-  activeStatus: PropTypes.bool,
+  activeStatus: PropTypes.string,
 };
 
 ColorIcon.propTypes = {

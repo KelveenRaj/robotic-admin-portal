@@ -49,13 +49,27 @@ const columns = [
     filterFn: (row, columnId, filterStatuses) => {
       if (filterStatuses.length === 0) return true;
       const status = row.getValue(columnId);
-      console.log(status);
       return filterStatuses.includes(status);
     },
   },
+  {
+    accessorKey: "actions",
+    header: "Actions",
+    size: 100,
+    cell: ({ openModal, ...props }) => (
+      <Button
+        colorScheme="blue"
+        onClick={() => {
+          openModal(props.row.original);
+        }}
+      >
+        View
+      </Button>
+    ),
+  },
 ];
 
-const DataTable = ({ tableData }) => {
+const DataTable = ({ tableData, openModal }) => {
   const [data, setData] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const table = useReactTable({
@@ -69,8 +83,6 @@ const DataTable = ({ tableData }) => {
     columnResizeMode: "onChange",
   });
 
-  console.log(columnFilters);
-
   useEffect(() => {
     setData(tableData);
   }, [tableData]);
@@ -82,6 +94,8 @@ const DataTable = ({ tableData }) => {
         setColumnFilters={setColumnFilters}
       />
       <TableContainer>
+        {/* Display total number of records */}
+        <Text mb={2}>Total records: {table.getRowModel().rows.length}</Text>
         <Table w={table.getTotalSize()}>
           <Thead>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -136,10 +150,10 @@ const DataTable = ({ tableData }) => {
                       borderWidth={1.5}
                       borderColor="grey"
                     >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      {flexRender(cell.column.columnDef.cell, {
+                        ...cell.getContext(),
+                        openModal,
+                      })}
                     </Td>
                   ))}
                 </Tr>
@@ -173,6 +187,7 @@ const DataTable = ({ tableData }) => {
 
 DataTable.propTypes = {
   tableData: PropTypes.array.isRequired,
+  openModal: PropTypes.func.isRequired,
 };
 
 export default DataTable;
