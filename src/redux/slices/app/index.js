@@ -4,6 +4,7 @@ const initialState = {
   accessToken: null,
   userData: {},
   students: [],
+  centres: [],
 };
 
 const appSlice = createSlice({
@@ -19,6 +20,9 @@ const appSlice = createSlice({
     saveStudentList(state, action) {
       state.students = action.payload;
     },
+    saveCentreList(state, action) {
+      state.centres = action.payload;
+    },
     resetUserData(state) {
       state.accessToken = null;
       state.userData = null;
@@ -26,6 +30,11 @@ const appSlice = createSlice({
   },
 });
 
-export const { setAccessToken, saveUserData, saveStudentList, resetUserData } =
-  appSlice.actions;
+export const {
+  setAccessToken,
+  saveUserData,
+  saveStudentList,
+  saveCentreList,
+  resetUserData,
+} = appSlice.actions;
 export default appSlice.reducer;

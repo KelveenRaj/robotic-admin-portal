@@ -44,7 +44,38 @@ const columns = [
     accessorKey: "status",
     header: "Status",
     size: 300,
-    cell: (props) => <p>{props.getValue()}</p>,
+    cell: (props) => {
+      const status = props.getValue();
+      let color;
+      switch (status) {
+        case "approved":
+          color = "green.600";
+          break;
+        case "rejected":
+          color = "red.600";
+          break;
+        case "pending center":
+          color = "blue.600";
+          break;
+        case "pending admin":
+          color = "yellow.500";
+          break;
+        default:
+          color = "black";
+      }
+      return (
+        <Box
+          bg={color}
+          color="white"
+          borderRadius="md"
+          px={2}
+          py={2}
+          display="inline-block"
+        >
+          {status}
+        </Box>
+      );
+    },
     enableColumnFilter: true,
     filterFn: (row, columnId, filterStatuses) => {
       if (filterStatuses.length === 0) return true;
@@ -80,7 +111,6 @@ const DataTable = ({ tableData, openModal }) => {
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    columnResizeMode: "onChange",
   });
 
   useEffect(() => {
@@ -94,7 +124,6 @@ const DataTable = ({ tableData, openModal }) => {
         setColumnFilters={setColumnFilters}
       />
       <TableContainer>
-        {/* Display total number of records */}
         <Text mb={2}>Total records: {table.getRowModel().rows.length}</Text>
         <Table w={table.getTotalSize()}>
           <Thead>
@@ -121,13 +150,6 @@ const DataTable = ({ tableData, openModal }) => {
                         desc: " 🔽",
                       }[header.column.getIsSorted()]
                     }
-                    <Box
-                      onMouseDown={header.getResizeHandler()}
-                      onTouchStart={header.getResizeHandler()}
-                      className={`resizer ${
-                        header.column.getIsResizing() ? "isResizing" : ""
-                      }`}
-                    />
                   </Th>
                 ))}
               </Tr>

@@ -12,7 +12,6 @@ import IndexPage from "./pages/IndexPage";
 import LoginPage from "./pages/LoginPage";
 import LogoutPage from "./pages/LogoutPage";
 import Dashboard from "./pages/Dashboard";
-import Profile from "./pages/Profile";
 import ForgotPassword from "./pages/ForgotPassword";
 import Students from "./pages/Students";
 import Centres from "./pages/Centres";
@@ -30,7 +29,6 @@ const router = createBrowserRouter(
       {/* protected routes */}
       <Route element={<PrivateRoute />}>
         <Route path="dashboard" element={<Dashboard />} />
-        <Route path="profile" element={<Profile />} />
         <Route path="students" element={<Students />} />
         <Route path="centres" element={<Centres />} />
       </Route>

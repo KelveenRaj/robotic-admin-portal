@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
-import { makeSelectUserName } from "../../../redux/slices/app/selector";
+import { makeSelectUserRole } from "../../../redux/slices/app/selector";
 import {
   Box,
   Flex,
@@ -15,26 +15,21 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  MenuDivider,
   Avatar,
 } from "@chakra-ui/react";
 import { FiMenu, FiChevronDown, FiBell } from "react-icons/fi";
 
-const MobileNav = ({ onOpen, onLogout, onClickProfile, ...props }) => {
+const MobileNav = ({ onOpen, onLogout, ...props }) => {
   const location = useLocation();
   const [currentPage, setCurrentPage] = useState(null);
-  const userName = useSelector(makeSelectUserName());
+  const role = useSelector(makeSelectUserRole());
 
   useEffect(() => {
     let currentLocation = location?.pathname;
     if (currentLocation === "/dashboard") {
       setCurrentPage("Dashboard");
-    } else if (currentLocation === "/test") {
-      setCurrentPage("Test");
-    } else if (currentLocation === "/profile") {
-      setCurrentPage("Profile");
     } else {
-      setCurrentPage("unknown");
+      setCurrentPage("Admin Portal");
     }
   }, [location]);
 
@@ -94,7 +89,7 @@ const MobileNav = ({ onOpen, onLogout, onClickProfile, ...props }) => {
                   spacing="1px"
                   ml="2"
                 >
-                  <Text fontSize="sm">{userName}</Text>
+                  <Text fontSize="sm">{role}</Text>
                 </VStack>
                 <Box display={{ base: "none", md: "flex" }}>
                   <FiChevronDown />
@@ -105,8 +100,6 @@ const MobileNav = ({ onOpen, onLogout, onClickProfile, ...props }) => {
               bg={useColorModeValue("white", "gray.900")}
               borderColor={useColorModeValue("gray.200", "gray.700")}
             >
-              <MenuItem onClick={onClickProfile}>Profile</MenuItem>
-              <MenuDivider />
               <MenuItem onClick={onLogout}>Sign out</MenuItem>
             </MenuList>
           </Menu>

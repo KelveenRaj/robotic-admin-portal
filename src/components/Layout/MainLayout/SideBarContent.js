@@ -1,5 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { useSelector } from "react-redux";
+import { makeSelectUserRole } from "../../../redux/slices/app/selector";
 import SteamCupLogoEdited from "../../../assets/images/STEAM Cup+edited.png";
 import {
   Box,
@@ -12,11 +14,26 @@ import { FiHome, FiUser } from "react-icons/fi";
 import NavItem from "./NavItem";
 
 const SidebarContent = ({ onClose, ...props }) => {
-  const LinkItems = [
-    { name: "Dashboard", icon: FiHome, path: "/dashboard" },
-    { name: "Students", icon: FiUser, path: "/students" },
-    { name: "Centres", icon: FiUser, path: "/centres" },
-  ];
+  const role = useSelector(makeSelectUserRole());
+
+  const getLinkItems = (userRole) => {
+    if (userRole === "admin") {
+      return [
+        { name: "Dashboard", icon: FiHome, path: "/dashboard" },
+        { name: "Students", icon: FiUser, path: "/students" },
+        { name: "Centres", icon: FiUser, path: "/centres" },
+      ];
+    } else if (userRole === "center") {
+      return [
+        { name: "Dashboard", icon: FiHome, path: "/dashboard" },
+        { name: "Students", icon: FiUser, path: "/students" },
+      ];
+    } else {
+      return [];
+    }
+  };
+
+  const linkItems = getLinkItems(role);
 
   return (
     <Box
@@ -33,7 +50,7 @@ const SidebarContent = ({ onClose, ...props }) => {
         <Image src={SteamCupLogoEdited} alt="SteamCup Logo" maxH="12" />
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
-      {LinkItems.map((link, index) => (
+      {linkItems.map((link, index) => (
         <NavItem key={index} icon={link.icon} path={link.path}>
           {link.name}
         </NavItem>

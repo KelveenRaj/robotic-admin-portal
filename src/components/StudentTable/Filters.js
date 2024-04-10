@@ -13,7 +13,6 @@ import FilterPopover from "./FilterPopover";
 const Filters = ({ columnFilters, setColumnFilters }) => {
   const taskName = columnFilters.find((f) => f.id === "fullName")?.value || "";
 
-  // console.log(columnFilters);
   const onFilterChange = (id, value) =>
     setColumnFilters((prev) =>
       prev

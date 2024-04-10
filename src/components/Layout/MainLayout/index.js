@@ -12,7 +12,6 @@ import {
 } from "@chakra-ui/react";
 import SidebarContent from "./SideBarContent";
 import MobileNav from "./MobileNavItem";
-import MaintenanceAlert from "../../MaintenanceALert";
 
 const Layout = ({ children }) => {
   const navigate = useNavigate();
@@ -35,10 +34,6 @@ const Layout = ({ children }) => {
     navigate("/logout");
   };
 
-  const onClickProfile = () => {
-    navigate("/profile");
-  };
-
   return (
     <Box minH="100vh" bg={useColorModeValue("gray.100", "gray.900")}>
       <SidebarContent
@@ -57,13 +52,8 @@ const Layout = ({ children }) => {
           <SidebarContent onClose={onClose} />
         </DrawerContent>
       </Drawer>
-      <MobileNav
-        onOpen={onOpen}
-        onLogout={onLogout}
-        onClickProfile={onClickProfile}
-      />
+      <MobileNav onOpen={onOpen} onLogout={onLogout} />
       <Box ml={{ base: 0, md: 60 }} p="4">
-        <MaintenanceAlert />
         {children}
       </Box>
     </Box>

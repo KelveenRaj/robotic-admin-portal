@@ -20,6 +20,7 @@ const STATUSES = [
   { id: 1, name: "pending center", color: "blue.300" },
   { id: 2, name: "pending admin", color: "yellow.400" },
   { id: 3, name: "approved", color: "green.400" },
+  { id: 4, name: "rejected", color: "red.400" },
 ];
 
 const ColorIcon = ({ color, ...props }) => (
