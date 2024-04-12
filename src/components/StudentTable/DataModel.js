@@ -100,7 +100,7 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
                   fullName: rowData?.fullName,
                   dob: rowData?.dob,
                   gender: rowData?.gender,
-                  center: rowData?.center,
+                  center: rowData?.centerName,
                   nric: rowData?.nric,
                   passport: rowData?.passport,
                   contact: rowData?.contact,

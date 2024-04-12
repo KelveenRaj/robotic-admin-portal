@@ -13,11 +13,16 @@ const generatePublicKey = async () => {
   }
 };
 
-const signUp = async (payload) => {
+const createCentreAccount = async (payload, token) => {
   try {
     const response = await axios.post(
-      `${process.env.REACT_APP_BASE_API}/user/student`,
-      payload
+      `${process.env.REACT_APP_BASE_API}/user/center`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
     return response?.data;
   } catch (error) {
@@ -37,4 +42,4 @@ const verifyOtp = async (payload) => {
   }
 };
 
-export { generatePublicKey, signUp, verifyOtp };
+export { generatePublicKey, createCentreAccount, verifyOtp };

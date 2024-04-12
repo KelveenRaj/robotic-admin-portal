@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import {
@@ -27,7 +28,7 @@ import { FiSliders } from "react-icons/fi";
 
 const columns = [
   {
-    accessorKey: "fullName",
+    accessorKey: "name",
     header: "Name",
     size: 300,
     cell: (props) => <p>{props.getValue()}</p>,
@@ -35,33 +36,33 @@ const columns = [
     filterFn: "includesString",
   },
   {
-    accessorKey: "centerName",
-    header: "Centre",
+    accessorKey: "location",
+    header: "Location",
+    size: 300,
+    cell: (props) => <p>{props.getValue()}</p>,
+  },
+  {
+    accessorKey: "id",
+    header: "Centre ID",
     size: 300,
     cell: (props) => <p>{props.getValue()}</p>,
   },
   {
     accessorKey: "status",
     header: "Status",
-    size: 300,
+    size: 200,
     cell: (props) => {
       const status = props.getValue();
       let color;
       switch (status) {
-        case "approved":
-          color = "green.600";
-          break;
-        case "rejected":
+        case "Not Assign":
           color = "red.600";
           break;
-        case "pending center":
-          color = "blue.600";
-          break;
-        case "pending admin":
-          color = "yellow.500";
+        case "Assigned":
+          color = "green.600";
           break;
         default:
-          color = "black";
+          color = "blue";
       }
       return (
         <Box
@@ -100,7 +101,7 @@ const columns = [
   },
 ];
 
-const DataTable = ({ tableData, openModal }) => {
+const DataTable = ({ tableData, openModal, refetch }) => {
   const [data, setData] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const table = useReactTable({
@@ -122,6 +123,7 @@ const DataTable = ({ tableData, openModal }) => {
       <Filters
         columnFilters={columnFilters}
         setColumnFilters={setColumnFilters}
+        refetch={refetch}
       />
       <TableContainer>
         <Text mb={2}>Total records: {table.getRowModel().rows.length}</Text>
@@ -210,6 +212,7 @@ const DataTable = ({ tableData, openModal }) => {
 DataTable.propTypes = {
   tableData: PropTypes.array.isRequired,
   openModal: PropTypes.func.isRequired,
+  refetch: PropTypes.func.isRequired,
 };
 
 export default DataTable;

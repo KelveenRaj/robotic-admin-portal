@@ -1,14 +1,18 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Heading, Flex } from "@chakra-ui/react";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
-import { useGetCentresQuery } from "../../redux/slices/app/api";
+import { useGetCentresListQuery } from "../../redux/slices/app/api";
 import { makeSelectCentresList } from "../../redux/slices/app/selector";
 import { saveCentreList } from "../../redux/slices/app";
 import Layout from "../../components/Layout/MainLayout";
+import DataTable from "../../components/CentreTable";
+import DataModal from "../../components/CentreTable/Data,Modal";
 const Centres = () => {
   const dispatch = useDispatch();
-  const { data, isLoading, isError } = useGetCentresQuery();
+  const [modalData, setModalData] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { data, isLoading, isError, refetch } = useGetCentresListQuery();
   const centreData = useSelector(makeSelectCentresList());
 
   useEffect(() => {
@@ -19,7 +23,15 @@ const Centres = () => {
     }
   }, [data, isLoading, isError, dispatch]);
 
-  console.log(centreData);
+  const openModal = (rowData) => {
+    setModalData(rowData);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    refetch();
+  };
 
   return (
     <Layout>
@@ -27,6 +39,16 @@ const Centres = () => {
         <Heading as="h2" size="lg" mb="4">
           Centres
         </Heading>
+        <DataTable
+          tableData={centreData}
+          openModal={openModal}
+          refetch={refetch}
+        />
+        <DataModal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          rowData={modalData}
+        />
       </Flex>
     </Layout>
   );
