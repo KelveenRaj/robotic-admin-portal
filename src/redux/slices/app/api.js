@@ -10,12 +10,12 @@ export const appApi = baseApiSlice.injectEndpoints({
       }),
       getStudentList: builder.query({
         query: () => ({
-          url: "/users?role=student",
+          url: "/user/students",
         }),
       }),
       getCentresList: builder.query({
         query: () => ({
-          url: "/center",
+          url: "/user/centers",
         }),
       }),
       approveStudent: builder.mutation({
@@ -33,7 +33,7 @@ export const appApi = baseApiSlice.injectEndpoints({
       }),
       createCentre: builder.mutation({
         query: ({ body }) => ({
-          url: `/center`,
+          url: `/user/center`,
           method: "POST",
           body: body,
         }),

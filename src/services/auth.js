@@ -13,6 +13,21 @@ const generatePublicKey = async () => {
   }
 };
 
+const generateAccessToken = async (cognitoToken) => {
+  try {
+    const response = await axios.post(
+      `${process.env.REACT_APP_BASE_API}/auth/generate-token`,
+      {
+        accessToken: cognitoToken,
+      },
+      null
+    );
+    return response?.data?.data;
+  } catch (error) {
+    throw new Error("Authentication Failed: " + error.response.data.message);
+  }
+};
+
 const createCentreAccount = async (payload, token) => {
   try {
     const response = await axios.post(
@@ -42,4 +57,9 @@ const verifyOtp = async (payload) => {
   }
 };
 
-export { generatePublicKey, createCentreAccount, verifyOtp };
+export {
+  generatePublicKey,
+  generateAccessToken,
+  createCentreAccount,
+  verifyOtp,
+};

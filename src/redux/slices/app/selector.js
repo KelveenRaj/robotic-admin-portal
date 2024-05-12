@@ -2,16 +2,13 @@ import { createSelector } from "@reduxjs/toolkit";
 
 const selectApp = (state) => state.app;
 
-export const makeSelectAccessToken = () =>
-  createSelector(selectApp, (appState) => appState.accessToken);
-
 export const makeSelectUserData = () =>
   createSelector(selectApp, (appState) => appState.userData);
 
 export const makeSelectStudentList = () =>
   createSelector(selectApp, (appState) => appState.students);
 
-  export const makeSelectCentresList = () =>
+export const makeSelectCentresList = () =>
   createSelector(selectApp, (appState) => appState.centres);
 
 export const makeSelectUserName = () =>

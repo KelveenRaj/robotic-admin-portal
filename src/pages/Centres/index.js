@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Heading, Flex } from "@chakra-ui/react";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,13 +7,15 @@ import { makeSelectCentresList } from "../../redux/slices/app/selector";
 import { saveCentreList } from "../../redux/slices/app";
 import Layout from "../../components/Layout/MainLayout";
 import DataTable from "../../components/CentreTable";
-import DataModal from "../../components/CentreTable/Data,Modal";
+import DataModal from "../../components/CentreTable/DataModal";
 const Centres = () => {
   const dispatch = useDispatch();
   const [modalData, setModalData] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { data, isLoading, isError, refetch } = useGetCentresListQuery();
   const centreData = useSelector(makeSelectCentresList());
+
+  const tableData = useMemo(() => centreData, [centreData]);
 
   useEffect(() => {
     if (!isLoading && !isError && data) {
@@ -40,7 +42,7 @@ const Centres = () => {
           Centres
         </Heading>
         <DataTable
-          tableData={centreData}
+          tableData={tableData}
           openModal={openModal}
           refetch={refetch}
         />

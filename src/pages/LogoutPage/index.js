@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { resetUserData } from "../../redux/slices/app";
+import { resetApp } from "../../redux/slices/app";
 import userpool from "../../utils/userpool";
 
 const LogoutPage = () => {
@@ -13,9 +13,9 @@ const LogoutPage = () => {
     if (user) {
       user.signOut();
     }
-    dispatch(resetUserData());
+    dispatch(resetApp());
     navigate("/login", { replace: true });
-  }, [navigate]);
+  }, []);
 };
 
 export default LogoutPage;

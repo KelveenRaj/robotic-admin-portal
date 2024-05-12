@@ -12,7 +12,6 @@ import {
 import {
   Box,
   Button,
-  ButtonGroup,
   Icon,
   Text,
   TableContainer,
@@ -22,9 +21,12 @@ import {
   Tr,
   Th,
   Td,
+  Badge,
+  Flex,
 } from "@chakra-ui/react";
 import Filters from "./Filters";
-import { FiSliders } from "react-icons/fi";
+import { FiSliders, FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { ArrowDownIcon, ArrowUpIcon } from "@chakra-ui/icons";
 
 const columns = [
   {
@@ -56,25 +58,24 @@ const columns = [
       let color;
       switch (status) {
         case "Not Assign":
-          color = "red.600";
+          color = "red";
           break;
         case "Assigned":
-          color = "green.600";
+          color = "green";
           break;
         default:
           color = "blue";
       }
       return (
-        <Box
-          bg={color}
-          color="white"
-          borderRadius="md"
+        <Badge
+          size={"xl"}
           px={2}
           py={2}
-          display="inline-block"
+          borderRadius={"10px"}
+          colorScheme={color}
         >
           {status}
-        </Box>
+        </Badge>
       );
     },
     enableColumnFilter: true,
@@ -90,7 +91,8 @@ const columns = [
     size: 100,
     cell: ({ openModal, ...props }) => (
       <Button
-        colorScheme="blue"
+        colorScheme="teal"
+        size={"sm"}
         onClick={() => {
           openModal(props.row.original);
         }}
@@ -127,31 +129,29 @@ const DataTable = ({ tableData, openModal, refetch }) => {
       />
       <TableContainer>
         <Text mb={2}>Total records: {table.getRowModel().rows.length}</Text>
-        <Table w={table.getTotalSize()}>
+        <Table size="md" w={table.getTotalSize()}>
           <Thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <Tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <Th
-                    w={header.getSize()}
-                    key={header.id}
-                    borderWidth={1.5}
-                    borderColor="grey"
-                  >
-                    {header.column.columnDef.header}
-                    {header.column.getCanSort() && (
-                      <Icon
-                        as={FiSliders}
-                        mx={3}
-                        onClick={header.column.getToggleSortingHandler()}
-                      />
-                    )}
-                    {
-                      {
-                        asc: " 🔼",
-                        desc: " 🔽",
-                      }[header.column.getIsSorted()]
-                    }
+                  <Th w={header.getSize()} key={header.id}>
+                    <Flex align={"center"} gap={"10px"}>
+                      <Box as="span">{header.column.columnDef.header}</Box>
+                      {header.column.getCanSort() && (
+                        <Icon
+                          as={FiSliders}
+                          onClick={header.column.getToggleSortingHandler()}
+                        />
+                      )}
+                      <Box as="span">
+                        {
+                          {
+                            asc: <ArrowUpIcon boxSize={3} ml={2} />,
+                            desc: <ArrowDownIcon boxSize={3} ml={2} />,
+                          }[header.column.getIsSorted()]
+                        }
+                      </Box>
+                    </Flex>
                   </Th>
                 ))}
               </Tr>
@@ -168,12 +168,7 @@ const DataTable = ({ tableData, openModal, refetch }) => {
               table.getRowModel().rows.map((row) => (
                 <Tr key={row.id}>
                   {row.getVisibleCells().map((cell) => (
-                    <Td
-                      w={cell.column.getSize()}
-                      key={cell.id}
-                      borderWidth={1.5}
-                      borderColor="grey"
-                    >
+                    <Td w={cell.column.getSize()} key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, {
                         ...cell.getContext(),
                         openModal,
@@ -185,25 +180,26 @@ const DataTable = ({ tableData, openModal, refetch }) => {
             )}
           </Tbody>
         </Table>
-        <br />
-        <Text mb={2}>
-          Page {table.getState().pagination.pageIndex + 1} of{" "}
-          {table.getPageCount()}
-        </Text>
-        <ButtonGroup size="sm" isAttached variant="solid">
+        <Flex align={"center"} justify={"start"} mt={"40px"} gap={"5px"}>
+          <Text mr={2} fontSize="sm">
+            Page {table.getState().pagination.pageIndex + 1} of{" "}
+            {table.getPageCount()}
+          </Text>
           <Button
+            size={"xs"}
             onClick={() => table.previousPage()}
             isDisabled={!table.getCanPreviousPage()}
           >
-            {"<"}
+            <Icon boxSize={4} as={FiChevronLeft} />
           </Button>
           <Button
+            size={"xs"}
             onClick={() => table.nextPage()}
             isDisabled={!table.getCanNextPage()}
           >
-            {">"}
+            <Icon boxSize={4} as={FiChevronRight} />
           </Button>
-        </ButtonGroup>
+        </Flex>
       </TableContainer>
     </Box>
   );

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { toast } from "react-toastify";
 import NodeRSA from "node-rsa";
 import PropTypes from "prop-types";
-import { useSelector } from "react-redux";
 import { Formik, Field } from "formik";
 import {
   Modal,
@@ -36,15 +35,13 @@ import {
   verifyOtp,
 } from "../../services/auth";
 
-import { makeSelectAccessToken } from "../../redux/slices/app/selector";
-
 const DataModal = ({ isOpen, onClose, rowData }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [signUpEmail, setSignUpEmail] = useState("");
   const [isVerify, setIsVerify] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const token = useSelector(makeSelectAccessToken());
+  const token = JSON.parse(localStorage.getItem("token"));
 
   const performRSAEncryption = async (payload) => {
     try {
@@ -71,7 +68,10 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
           password: encryptedPassword,
         };
         console.log(updatedValues);
-        const response = await createCentreAccount(updatedValues, token);
+        const response = await createCentreAccount(
+          updatedValues,
+          token?.accessToken
+        );
         if (response?.success) {
           setLoading(false);
           setIsVerify(true);
