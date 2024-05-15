@@ -438,7 +438,7 @@ const DataModal = ({ isOpen, onClose, rowData }) => {
 DataModal.propTypes = {
   isOpen: PropTypes.any.isRequired,
   onClose: PropTypes.func.isRequired,
-  rowData: PropTypes.object.isRequired,
+  rowData: PropTypes.object,
 };
 
 export default DataModal;

@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import {
@@ -30,7 +29,7 @@ import { ArrowDownIcon, ArrowUpIcon } from "@chakra-ui/icons";
 
 const columns = [
   {
-    accessorKey: "name",
+    accessorKey: "centerName",
     header: "Name",
     size: 300,
     cell: (props) => <p>{props.getValue()}</p>,
@@ -38,8 +37,8 @@ const columns = [
     filterFn: "includesString",
   },
   {
-    accessorKey: "location",
-    header: "Location",
+    accessorKey: "email",
+    header: "Email ID",
     size: 300,
     cell: (props) => <p>{props.getValue()}</p>,
   },

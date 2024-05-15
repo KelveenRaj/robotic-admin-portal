@@ -31,13 +31,6 @@ export const appApi = baseApiSlice.injectEndpoints({
           method: "POST",
         }),
       }),
-      createCentre: builder.mutation({
-        query: ({ body }) => ({
-          url: `/user/center`,
-          method: "POST",
-          body: body,
-        }),
-      }),
     };
   },
 });
@@ -48,5 +41,4 @@ export const {
   useGetStudentListQuery,
   useApproveStudentMutation,
   useRejectStudentMutation,
-  useCreateCentreMutation,
 } = appApi;

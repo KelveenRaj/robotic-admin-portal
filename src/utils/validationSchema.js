@@ -79,6 +79,12 @@ const resetPasswordSchema = Yup.object().shape({
 const createCentreSchema = Yup.object().shape({
   name: Yup.string().required("Name is required"),
   location: Yup.string().required("Location is required"),
+  email: Yup.string()
+    .email("Invalid email address")
+    .required("Email is required"),
+  password: Yup.string()
+    .min(6, "Password should be at least 6 characters")
+    .required("Password is required"),
 });
 
 const createCentreAccountSchema = Yup.object().shape({

@@ -48,7 +48,7 @@ const createCentreAccount = async (payload, token) => {
 const verifyOtp = async (payload) => {
   try {
     const response = await axios.post(
-      `${process.env.REACT_APP_BASE_API}/user/verify-otp`,
+      `${process.env.REACT_APP_BASE_API}/auth/verify-otp`,
       payload
     );
     return response?.data;

@@ -19,7 +19,7 @@ const Centres = () => {
 
   useEffect(() => {
     if (!isLoading && !isError && data) {
-      dispatch(saveCentreList(data?.data));
+      dispatch(saveCentreList(data?.data?.data));
     } else if (isError) {
       toast.error("Error getting centre list");
     }
@@ -41,11 +41,13 @@ const Centres = () => {
         <Heading as="h2" size="lg" mb="4">
           Centres
         </Heading>
+        {/* centre table */}
         <DataTable
           tableData={tableData}
           openModal={openModal}
           refetch={refetch}
         />
+        {/* view centre */}
         <DataModal
           isOpen={isModalOpen}
           onClose={closeModal}

@@ -112,7 +112,6 @@ const MobileNav = ({ onOpen, onLogout, ...props }) => {
 MobileNav.propTypes = {
   onOpen: PropTypes.func.isRequired,
   onLogout: PropTypes.func.isRequired,
-  onClickProfile: PropTypes.func.isRequired,
 };
 
 export default MobileNav;
