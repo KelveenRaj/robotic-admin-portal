@@ -26,7 +26,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
-import { Formik, Field } from "formik";
+import { useFormik } from "formik";
 import { FiSearch, FiPlus } from "react-icons/fi";
 import { createCentreSchema, verifySchema } from "../../utils/validationSchema";
 import {
@@ -46,25 +46,7 @@ const Filters = ({ columnFilters, setColumnFilters, refetch }) => {
 
   const token = JSON.parse(localStorage.getItem("token"));
 
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-
-  const onFilterChange = (id, value) =>
-    setColumnFilters((prev) =>
-      prev
-        .filter((f) => f.id !== id)
-        .concat({
-          id,
-          value,
-        })
-    );
-
-  const performRSAEncryption = async (payload) => {
+  const performRSAEncryption = async (payload, actions) => {
     try {
       const publicKey = await generatePublicKey();
       if (publicKey) {
@@ -74,21 +56,24 @@ const Filters = ({ columnFilters, setColumnFilters, refetch }) => {
       }
     } catch (error) {
       setLoading(false);
+      actions.resetForm();
       toast.error(error);
     }
   };
 
-  const handleCreateNewCentre = async (values) => {
+  const handleCreateNewCentre = async (values, actions) => {
     setLoading(true);
     try {
-      const encryptedPassword = await performRSAEncryption(values.password);
+      const encryptedPassword = await performRSAEncryption(
+        values.password,
+        actions
+      );
 
       if (encryptedPassword) {
         const updatedValues = {
           ...values,
           password: encryptedPassword,
         };
-        console.log(updatedValues);
         const response = await createCentreAccount(
           updatedValues,
           token?.accessToken
@@ -97,15 +82,17 @@ const Filters = ({ columnFilters, setColumnFilters, refetch }) => {
           setCentreId(response?.data?.id);
           setLoading(false);
           setIsVerify(true);
+          actions.resetForm();
         }
       }
     } catch (error) {
       setLoading(false);
       toast.error(error);
+      actions.resetForm();
     }
   };
 
-  const handleVerify = async (values) => {
+  const handleVerify = async (values, actions) => {
     setLoading(true);
     try {
       const payload = {
@@ -119,12 +106,58 @@ const Filters = ({ columnFilters, setColumnFilters, refetch }) => {
         toast.success("Sucessfully registered account!");
         refetch();
         closeModal();
+        actions.resetForm();
+        setIsVerify(false);
       }
     } catch (error) {
       setLoading(false);
       toast.error(error);
+      actions.resetForm();
     }
   };
+
+  const createCentreFormik = useFormik({
+    initialValues: {
+      name: "",
+      location: "",
+      email: "",
+      password: "",
+    },
+    validationSchema: createCentreSchema,
+    onSubmit: (values, actions) => {
+      handleCreateNewCentre(values, actions);
+    },
+  });
+
+  const verifyOTPFormik = useFormik({
+    initialValues: {
+      code: "",
+    },
+    validationSchema: verifySchema,
+    onSubmit: (values, actions) => {
+      handleVerify(values, actions);
+    },
+  });
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    createCentreFormik.resetForm();
+    verifyOTPFormik.resetForm();
+  };
+
+  const onFilterChange = (id, value) =>
+    setColumnFilters((prev) =>
+      prev
+        .filter((f) => f.id !== id)
+        .concat({
+          id,
+          value,
+        })
+    );
 
   return (
     <HStack mb={6} spacing={3}>
@@ -162,162 +195,145 @@ const Filters = ({ columnFilters, setColumnFilters, refetch }) => {
                   Create New Centre
                 </Heading>
                 {isVerify ? (
-                  <Formik
-                    initialValues={{
-                      code: "",
-                    }}
-                    onSubmit={(values) => {
-                      handleVerify(values);
-                    }}
-                    validationSchema={verifySchema}
+                  <VStack
+                    as="form"
+                    mx="auto"
+                    w="100%"
+                    spacing={4}
+                    justifyContent="center"
+                    onSubmit={verifyOTPFormik.handleSubmit}
                   >
-                    {({ handleSubmit, errors, touched }) => (
-                      <form onSubmit={handleSubmit}>
-                        <VStack spacing={4} align="flex-start">
-                          <Text fontSize="14px" fontWeight="500">
-                            Enter the verification otp sent to the registered
-                            email.
-                          </Text>
+                    <Text
+                      fontSize="14px"
+                      fontWeight="500"
+                      alignSelf="flex-start"
+                    >
+                      Enter the verification otp sent to the registered email.
+                    </Text>
+                    <FormControl
+                      isInvalid={
+                        verifyOTPFormik.errors.code &&
+                        verifyOTPFormik.touched.code
+                      }
+                    >
+                      <FormLabel>Verification OTP</FormLabel>
+                      <Input
+                        name="code"
+                        placeholder="6 digit OTP code"
+                        {...verifyOTPFormik.getFieldProps("code")}
+                      ></Input>
+                      <FormErrorMessage>
+                        {verifyOTPFormik.errors.code}
+                      </FormErrorMessage>
+                    </FormControl>
 
-                          <FormControl
-                            isInvalid={errors.code && touched.code}
-                            w="100%"
-                          >
-                            <FormLabel htmlFor="code">
-                              Verification OTP
-                            </FormLabel>
-                            <Field
-                              as={Input}
-                              id="code"
-                              name="code"
-                              type="text"
-                              variant="filled"
-                            />
-                            <FormErrorMessage>{errors.code}</FormErrorMessage>
-                          </FormControl>
-                          <Button type="submit" colorScheme="blue" w="full">
-                            {loading ? (
-                              <Spinner size="sm" color="white" />
-                            ) : (
-                              "Submit"
-                            )}
-                          </Button>
-                        </VStack>
-                      </form>
-                    )}
-                  </Formik>
+                    <Flex>
+                      <Button type="submit" colorScheme="green">
+                        {loading ? (
+                          <Spinner size="sm" color="white" />
+                        ) : (
+                          "Submit"
+                        )}
+                      </Button>
+                    </Flex>
+                  </VStack>
                 ) : (
-                  <Formik
-                    initialValues={{
-                      name: "",
-                      location: "",
-                      email: "",
-                      password: "",
-                    }}
-                    onSubmit={(values) => {
-                      handleCreateNewCentre(values);
-                    }}
-                    validationSchema={createCentreSchema}
+                  <VStack
+                    as="form"
+                    mx="auto"
+                    w="100%"
+                    spacing={4}
+                    justifyContent="center"
+                    onSubmit={createCentreFormik.handleSubmit}
                   >
-                    {({ handleSubmit, errors, touched }) => (
-                      <form onSubmit={handleSubmit}>
-                        <VStack spacing={4} align="flex-start">
-                          <FormControl
-                            isInvalid={errors.name && touched.name}
-                            w="100%"
+                    <FormControl
+                      isInvalid={
+                        createCentreFormik.errors.name &&
+                        createCentreFormik.touched.name
+                      }
+                    >
+                      <FormLabel>Name</FormLabel>
+                      <Input
+                        name="name"
+                        placeholder="Centre Name"
+                        {...createCentreFormik.getFieldProps("name")}
+                      ></Input>
+                      <FormErrorMessage>
+                        {createCentreFormik.errors.name}
+                      </FormErrorMessage>
+                    </FormControl>
+                    <FormControl
+                      isInvalid={
+                        createCentreFormik.errors.location &&
+                        createCentreFormik.touched.location
+                      }
+                    >
+                      <FormLabel>Location</FormLabel>
+                      <Input
+                        name="location"
+                        placeholder="Centre Location"
+                        {...createCentreFormik.getFieldProps("location")}
+                      ></Input>
+                      <FormErrorMessage>
+                        {createCentreFormik.errors.location}
+                      </FormErrorMessage>
+                    </FormControl>
+                    <FormControl
+                      isInvalid={
+                        createCentreFormik.errors.email &&
+                        createCentreFormik.touched.email
+                      }
+                    >
+                      <FormLabel>Email</FormLabel>
+                      <Input
+                        name="email"
+                        placeholder="Centre Email Address"
+                        {...createCentreFormik.getFieldProps("email")}
+                      ></Input>
+                      <FormErrorMessage>
+                        {createCentreFormik.errors.email}
+                      </FormErrorMessage>
+                    </FormControl>
+                    <FormControl
+                      isInvalid={
+                        createCentreFormik.errors.password &&
+                        createCentreFormik.touched.password
+                      }
+                    >
+                      <FormLabel>Password</FormLabel>
+                      <InputGroup>
+                        <Input
+                          name="password"
+                          placeholder="Centre Password"
+                          {...createCentreFormik.getFieldProps("password")}
+                          style={{
+                            WebkitTextSecurity: showPassword ? "none" : "disc", // Conditionally mask the text
+                          }}
+                        />
+                        <InputRightElement>
+                          <Button
+                            size="sm"
+                            onClick={() => setShowPassword(!showPassword)}
                           >
-                            <FormLabel htmlFor="name">Centre Name</FormLabel>
-                            <Field
-                              as={Input}
-                              id="name"
-                              name="name"
-                              type="text"
-                              variant="filled"
-                            />
-                            <FormErrorMessage>{errors.name}</FormErrorMessage>
-                          </FormControl>
+                            {showPassword ? <ViewOffIcon /> : <ViewIcon />}
+                          </Button>
+                        </InputRightElement>
+                      </InputGroup>
+                      <FormErrorMessage>
+                        {createCentreFormik.errors.password}
+                      </FormErrorMessage>
+                    </FormControl>
 
-                          <FormControl
-                            isInvalid={errors.location && touched.location}
-                            w="100%"
-                          >
-                            <FormLabel htmlFor="location">Location</FormLabel>
-                            <Field
-                              as={Input}
-                              id="location"
-                              name="location"
-                              type="text"
-                              variant="filled"
-                            />
-                            <FormErrorMessage>
-                              {errors.location}
-                            </FormErrorMessage>
-                          </FormControl>
-
-                          <FormControl
-                            isInvalid={errors.email && touched.email}
-                            w="100%"
-                          >
-                            <FormLabel htmlFor="email">Email Address</FormLabel>
-                            <Field
-                              as={Input}
-                              id="email"
-                              name="email"
-                              type="email"
-                              variant="filled"
-                            />
-                            <FormErrorMessage>{errors.email}</FormErrorMessage>
-                          </FormControl>
-                          <FormControl
-                            isInvalid={errors.password && touched.password}
-                            w="100%"
-                          >
-                            <FormLabel htmlFor="password">Password</FormLabel>
-                            <InputGroup>
-                              <Field
-                                as={Input}
-                                id="password"
-                                name="password"
-                                type={showPassword ? "text" : "password"}
-                                variant="filled"
-                              />
-                              <InputRightElement h={"full"}>
-                                <Button
-                                  variant={"ghost"}
-                                  onClick={() =>
-                                    setShowPassword(
-                                      (showPassword) => !showPassword
-                                    )
-                                  }
-                                >
-                                  {showPassword ? (
-                                    <ViewIcon />
-                                  ) : (
-                                    <ViewOffIcon />
-                                  )}
-                                </Button>
-                              </InputRightElement>
-                            </InputGroup>
-                            <FormErrorMessage>
-                              {errors.password}
-                            </FormErrorMessage>
-                          </FormControl>
-
-                          <Flex>
-                            <HStack spacing={4} w={"100%"}>
-                              <Button type="submit" colorScheme="green">
-                                {loading ? (
-                                  <Spinner size="sm" color="white" />
-                                ) : (
-                                  "Submit"
-                                )}
-                              </Button>
-                            </HStack>
-                          </Flex>
-                        </VStack>
-                      </form>
-                    )}
-                  </Formik>
+                    <Flex>
+                      <Button type="submit" colorScheme="green">
+                        {loading ? (
+                          <Spinner size="sm" color="white" />
+                        ) : (
+                          "Submit"
+                        )}
+                      </Button>
+                    </Flex>
+                  </VStack>
                 )}
               </Stack>
             </Flex>
