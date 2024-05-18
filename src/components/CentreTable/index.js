@@ -66,15 +66,17 @@ const columns = [
           color = "blue";
       }
       return (
-        <Badge
-          size={"xl"}
-          px={2}
-          py={2}
-          borderRadius={"10px"}
-          colorScheme={color}
-        >
-          {status}
-        </Badge>
+        <Flex justifyContent="center">
+          <Badge
+            size={"xl"}
+            px={2}
+            py={2}
+            borderRadius={"10px"}
+            colorScheme={color}
+          >
+            {status}
+          </Badge>
+        </Flex>
       );
     },
     enableColumnFilter: true,
@@ -89,15 +91,17 @@ const columns = [
     header: "Actions",
     size: 100,
     cell: ({ openModal, ...props }) => (
-      <Button
-        colorScheme="teal"
-        size={"sm"}
-        onClick={() => {
-          openModal(props.row.original);
-        }}
-      >
-        View
-      </Button>
+      <Flex justifyContent="center">
+        <Button
+          colorScheme="teal"
+          size={"sm"}
+          onClick={() => {
+            openModal(props.row.original);
+          }}
+        >
+          View
+        </Button>
+      </Flex>
     ),
   },
 ];
@@ -133,7 +137,11 @@ const DataTable = ({ tableData, openModal, refetch }) => {
             {table.getHeaderGroups().map((headerGroup) => (
               <Tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <Th w={header.getSize()} key={header.id}>
+                  <Th
+                    w={header.getSize()}
+                    key={header.id}
+                    backgroundColor="#CBD5E0"
+                  >
                     <Flex align={"center"} gap={"10px"}>
                       <Box as="span">{header.column.columnDef.header}</Box>
                       {header.column.getCanSort() && (
@@ -159,7 +167,11 @@ const DataTable = ({ tableData, openModal, refetch }) => {
           <Tbody>
             {table.getRowModel().rows.length === 0 ? (
               <Tr>
-                <Td colSpan={columns.length} textAlign="center">
+                <Td
+                  colSpan={columns.length}
+                  textAlign="center"
+                  backgroundColor="#F7FAFC"
+                >
                   No data found
                 </Td>
               </Tr>
@@ -167,7 +179,11 @@ const DataTable = ({ tableData, openModal, refetch }) => {
               table.getRowModel().rows.map((row) => (
                 <Tr key={row.id}>
                   {row.getVisibleCells().map((cell) => (
-                    <Td w={cell.column.getSize()} key={cell.id}>
+                    <Td
+                      w={cell.column.getSize()}
+                      key={cell.id}
+                      backgroundColor="#F7FAFC"
+                    >
                       {flexRender(cell.column.columnDef.cell, {
                         ...cell.getContext(),
                         openModal,

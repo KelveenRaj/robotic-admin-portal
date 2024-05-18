@@ -36,7 +36,7 @@ const MobileNav = ({ onOpen, onLogout, ...props }) => {
   return (
     <Flex
       px={{ base: 4, md: 4 }}
-      height="20"
+      height="14"
       alignItems="center"
       bg={useColorModeValue("white", "gray.900")}
       borderBottomWidth="1px"

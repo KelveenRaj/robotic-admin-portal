@@ -12,20 +12,22 @@ import {
 } from "@chakra-ui/react";
 import SidebarContent from "./SideBarContent";
 import MobileNav from "./MobileNavItem";
+import Spin from "../../Spin";
+import AnimatedPage from "../../AnimatedPage";
 
-const Layout = ({ children }) => {
+const Layout = ({ children, isLoading }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
-  const { data, isLoading, isError } = useGetUserDataQuery();
+  const { data, isLoading: isUserLoading, isError } = useGetUserDataQuery();
 
   useEffect(() => {
-    if (!isLoading && !isError && data) {
+    if (!isUserLoading && !isError && data) {
       dispatch(saveUserData(data?.data));
     } else if (isError) {
       onLogout();
     }
-  }, [data, isLoading, isError, dispatch]);
+  }, [data, isUserLoading, isError, dispatch]);
 
   const onClose = () => setIsOpen(false);
   const onOpen = () => setIsOpen(true);
@@ -54,7 +56,7 @@ const Layout = ({ children }) => {
       </Drawer>
       <MobileNav onOpen={onOpen} onLogout={onLogout} />
       <Box ml={{ base: 0, md: 60 }} p="4">
-        {children}
+        {isLoading ? <Spin /> : <AnimatedPage>{children}</AnimatedPage>}
       </Box>
     </Box>
   );
@@ -62,6 +64,11 @@ const Layout = ({ children }) => {
 
 Layout.propTypes = {
   children: PropTypes.any.isRequired,
+  isLoading: PropTypes.bool,
+};
+
+Layout.defaultProps = {
+  isLoading: false,
 };
 
 export default Layout;

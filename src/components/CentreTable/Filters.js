@@ -315,7 +315,7 @@ const Filters = ({ columnFilters, setColumnFilters, refetch }) => {
                             size="sm"
                             onClick={() => setShowPassword(!showPassword)}
                           >
-                            {showPassword ? <ViewOffIcon /> : <ViewIcon />}
+                            {showPassword ? <ViewIcon /> : <ViewOffIcon />}
                           </Button>
                         </InputRightElement>
                       </InputGroup>

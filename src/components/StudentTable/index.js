@@ -125,7 +125,7 @@ const DataTable = ({ tableData, openModal }) => {
       />
       <TableContainer>
         <Text mb={2}>Total records: {table.getRowModel().rows.length}</Text>
-        <Table w={table.getTotalSize()}>
+        <Table size="md" w={table.getTotalSize()}>
           <Thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <Tr key={headerGroup.id}>
@@ -133,8 +133,7 @@ const DataTable = ({ tableData, openModal }) => {
                   <Th
                     w={header.getSize()}
                     key={header.id}
-                    borderWidth={1.5}
-                    borderColor="grey"
+                    backgroundColor="#CBD5E0"
                   >
                     {header.column.columnDef.header}
                     {header.column.getCanSort() && (
@@ -158,7 +157,11 @@ const DataTable = ({ tableData, openModal }) => {
           <Tbody>
             {table.getRowModel().rows.length === 0 ? (
               <Tr>
-                <Td colSpan={columns.length} textAlign="center">
+                <Td
+                  colSpan={columns.length}
+                  textAlign="center"
+                  backgroundColor="#F7FAFC"
+                >
                   No data found
                 </Td>
               </Tr>
@@ -169,8 +172,7 @@ const DataTable = ({ tableData, openModal }) => {
                     <Td
                       w={cell.column.getSize()}
                       key={cell.id}
-                      borderWidth={1.5}
-                      borderColor="grey"
+                      backgroundColor="#F7FAFC"
                     >
                       {flexRender(cell.column.columnDef.cell, {
                         ...cell.getContext(),

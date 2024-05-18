@@ -57,9 +57,27 @@ const verifyOtp = async (payload) => {
   }
 };
 
+const logout = async (token) => {
+  try {
+    const response = await axios.post(
+      `${process.env.REACT_APP_BASE_API}/auth/logout`,
+      null,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response?.data;
+  } catch (error) {
+    console.error("Error during logout:", error);
+  }
+};
+
 export {
   generatePublicKey,
   generateAccessToken,
   createCentreAccount,
   verifyOtp,
+  logout,
 };

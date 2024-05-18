@@ -36,7 +36,7 @@ const Centres = () => {
   };
 
   return (
-    <Layout>
+    <Layout isLoading={isLoading}>
       <Flex flexDirection={"column"} paddingLeft={"20px"}>
         <Heading as="h2" size="lg" mb="4">
           Centres

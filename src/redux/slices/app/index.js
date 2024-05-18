@@ -21,7 +21,7 @@ const appSlice = createSlice({
     },
     resetApp(state) {
       state.userData = null;
-      localStorage.removeItem('token')
+      localStorage.removeItem("token");
     },
   },
 });
