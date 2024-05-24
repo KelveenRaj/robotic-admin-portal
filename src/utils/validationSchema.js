@@ -56,7 +56,8 @@ const signUpSchema = Yup.object().shape({
       /^(\+?6?01)[02-46-9]-*[0-9]{7}$|^(\+?6?01)[1]-*[0-9]{8}$/,
       "Invalid phone number. Please use a valid Malaysian phone number."
     ),
-  paymentMethod: Yup.string().required("Payment method is required"),
+  size: Yup.string().required("T-Shirt size is required"),
+  level: Yup.string().required("Level is required"),
 });
 
 const verifySchema = Yup.object().shape({
@@ -97,6 +98,10 @@ const createCentreAccountSchema = Yup.object().shape({
   center: Yup.string().required("Centre ID is required"),
 });
 
+const createLevelSchema = Yup.object().shape({
+  name: Yup.string().required("Level Name is required"),
+});
+
 export {
   loginSchema,
   signUpSchema,
@@ -105,4 +110,5 @@ export {
   resetPasswordSchema,
   createCentreSchema,
   createCentreAccountSchema,
+  createLevelSchema,
 };

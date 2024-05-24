@@ -9,7 +9,9 @@ import {
   getPaginationRowModel,
 } from "@tanstack/react-table";
 import {
+  Flex,
   Box,
+  Badge,
   Button,
   ButtonGroup,
   Icon,
@@ -24,11 +26,20 @@ import {
 } from "@chakra-ui/react";
 import Filters from "./Filters";
 import { FiSliders } from "react-icons/fi";
+import { ArrowDownIcon, ArrowUpIcon } from "@chakra-ui/icons";
 
 const columns = [
   {
-    accessorKey: "fullName",
+    accessorKey: "name",
     header: "Name",
+    size: 300,
+    cell: (props) => <p>{props.getValue()}</p>,
+    enableColumnFilter: true,
+    filterFn: "includesString",
+  },
+  {
+    accessorKey: "email",
+    header: "Email ID",
     size: 300,
     cell: (props) => <p>{props.getValue()}</p>,
     enableColumnFilter: true,
@@ -43,7 +54,7 @@ const columns = [
   {
     accessorKey: "status",
     header: "Status",
-    size: 300,
+    size: 200,
     cell: (props) => {
       const status = props.getValue();
       let color;
@@ -64,16 +75,18 @@ const columns = [
           color = "black";
       }
       return (
-        <Box
-          bg={color}
-          color="white"
-          borderRadius="md"
-          px={2}
-          py={2}
-          display="inline-block"
-        >
-          {status}
-        </Box>
+        <Flex justifyContent="center">
+          <Badge
+            size={"xl"}
+            px={2}
+            py={2}
+            borderRadius={"10px"}
+            color="white"
+            backgroundColor={color}
+          >
+            {status}
+          </Badge>
+        </Flex>
       );
     },
     enableColumnFilter: true,
@@ -88,14 +101,17 @@ const columns = [
     header: "Actions",
     size: 100,
     cell: ({ openModal, ...props }) => (
-      <Button
-        colorScheme="blue"
-        onClick={() => {
-          openModal(props.row.original);
-        }}
-      >
-        View
-      </Button>
+      <Flex justifyContent="center">
+        <Button
+          colorScheme="teal"
+          size={"sm"}
+          onClick={() => {
+            openModal(props.row.original);
+          }}
+        >
+          View
+        </Button>
+      </Flex>
     ),
   },
 ];
@@ -135,20 +151,23 @@ const DataTable = ({ tableData, openModal }) => {
                     key={header.id}
                     backgroundColor="#CBD5E0"
                   >
-                    {header.column.columnDef.header}
-                    {header.column.getCanSort() && (
-                      <Icon
-                        as={FiSliders}
-                        mx={3}
-                        onClick={header.column.getToggleSortingHandler()}
-                      />
-                    )}
-                    {
-                      {
-                        asc: " 🔼",
-                        desc: " 🔽",
-                      }[header.column.getIsSorted()]
-                    }
+                    <Flex align={"center"} gap={"10px"}>
+                      <Box as="span">{header.column.columnDef.header}</Box>
+                      {header.column.getCanSort() && (
+                        <Icon
+                          as={FiSliders}
+                          onClick={header.column.getToggleSortingHandler()}
+                        />
+                      )}
+                      <Box as="span">
+                        {
+                          {
+                            asc: <ArrowUpIcon boxSize={3} ml={2} />,
+                            desc: <ArrowDownIcon boxSize={3} ml={2} />,
+                          }[header.column.getIsSorted()]
+                        }
+                      </Box>
+                    </Flex>
                   </Th>
                 ))}
               </Tr>
